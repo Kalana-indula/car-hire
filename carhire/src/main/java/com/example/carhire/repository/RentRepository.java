@@ -1,6 +1,7 @@
 package com.example.carhire.repository;
 
 import com.example.carhire.entity.Rent;
+import com.example.carhire.entity.User;
 import com.example.carhire.entity.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,8 @@ public interface RentRepository extends JpaRepository<Rent,Long> {
 
     @Query("SELECT r FROM Rent r WHERE r.vehicle= :vehicle")
     List<Rent> findRentsByVehicle(@Param("vehicle") Vehicle vehicle);
+
+    @Query("SELECT r FROM Rent r WHERE r.user= :user")
+    List<Rent> findRentByUser(@Param("user")User user);
+
 }

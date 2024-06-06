@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*")
 public class RentController {
@@ -74,6 +76,46 @@ public class RentController {
 
         try{
             return ResponseEntity.status(HttpStatus.OK).body(rentService.updateRent(id,rentDto));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/vehicles/{id}/rents")
+    public ResponseEntity<?> getRentsByVehicle(@PathVariable Long id){
+        try{
+            List<Rent> rentList=rentService.getRentsByVehicle(id);
+
+            if((rentList!=null)&&(!rentList.isEmpty())){
+
+                return ResponseEntity.status(HttpStatus.OK).body(rentList);
+
+            }else if (rentList.isEmpty()){
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No rent record found for the vehicle");
+
+            } else{
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No vehicle found for entered Id");
+
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/users/{id}/rents")
+    public ResponseEntity<?> findRentByUser(@PathVariable Long id){
+        try{
+            List<Rent> rentList=rentService.getRentByUser(id);
+
+            if((rentList!=null)&&(!rentList.isEmpty())){
+                return ResponseEntity.status(HttpStatus.OK).body(rentList);
+            }else if(rentList.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No rent record found for the user");
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user found for the entered id");
+            }
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

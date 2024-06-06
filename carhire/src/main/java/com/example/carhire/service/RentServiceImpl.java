@@ -17,6 +17,8 @@ import java.util.List;
 @Service
 public class RentServiceImpl implements RentService{
 
+//    Calling repositories
+
     @Autowired
     private RentRepository rentRepository;
 
@@ -25,6 +27,9 @@ public class RentServiceImpl implements RentService{
 
     @Autowired
     private UserRepository userRepository;
+
+
+//  Calling Methods
 
     @Override
     public List<Rent> getAllRents() {
@@ -74,8 +79,33 @@ public class RentServiceImpl implements RentService{
     }
 
     @Override
-    public Rent getRentByUser(Long id) {
-        return null;
+    public List<Rent> getRentsByVehicle(Long id) {
+
+        Vehicle vehicle=vehicleRepository.findById(id).orElse(null);
+
+        if(vehicle!=null){
+           List<Rent> rentList=rentRepository.findRentsByVehicle(vehicle);
+
+           return rentList;
+        }else{
+            return null;
+        }
+
+    }
+
+    @Override
+    public List<Rent> getRentByUser(Long id) {
+
+        User user=userRepository.findById(id).orElse(null);
+
+        if(user!=null){
+            List<Rent> rentList=rentRepository.findRentByUser(user);
+
+            return rentList;
+        }else{
+            return null;
+        }
+
     }
 
     @Override

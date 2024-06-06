@@ -13,7 +13,10 @@ public interface RentService {
     Rent createRent(RentDto rentDto);
 
     Rent getRentById(Long id);
-    Rent getRentByUser(Long id);
+
+    List<Rent> getRentsByVehicle(Long id);
+
+    List<Rent> getRentByUser(Long id);
 
     String updateRent(Long id,RentDto rentDto);
 
