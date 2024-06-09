@@ -10,7 +10,7 @@ import java.util.List;
 public interface RentService {
     List<Rent> getAllRents();
 
-    Rent createRent(RentDto rentDto);
+    String createRent(RentDto rentDto);
 
     Rent getRentById(Long id);
 
@@ -23,4 +23,6 @@ public interface RentService {
     Boolean deleteRent(Long id);
 
     Boolean completeRent(Long id);
+
+    String hasRentForUser(Long id);
 }

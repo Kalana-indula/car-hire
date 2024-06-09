@@ -37,39 +37,56 @@ public class RentServiceImpl implements RentService{
     }
 
     @Override
-    public Rent createRent(RentDto rentDto){
+    public String createRent(RentDto rentDto){
 
         Vehicle existingVehicle=vehicleRepository.findById(rentDto.getVehicleId()).orElse(null);
         User existingUser=userRepository.findById(rentDto.getUserId()).orElse(null);
 
         if((existingVehicle!=null)&&(existingUser!=null)){
 
-            Rent rent=new Rent();
+            Rent rentByUser=rentRepository.findIncompletedRentByUser(rentDto.getUserId());
 
-            LocalDate today=LocalDate.now();
-            long daysBetween= ChronoUnit.DAYS.between(rentDto.getOrderDate(),today);
-            int duration=Math.toIntExact(daysBetween);
-            double totalPayable=0.0;
-            double additionalCharge=0.0;
+            Rent rentByVehicle=rentRepository.findIncompletedRentByVehicle(rentDto.getVehicleId());
 
-            if(duration>30){
-                additionalCharge=(existingVehicle.getRentPerDay()+1000)*(duration-30);
-                totalPayable=existingVehicle.getRentPerDay()*30+additionalCharge;
+            if(rentByUser==null){
+
+                if(rentByVehicle==null){
+                    Rent rent=new Rent();
+
+                    LocalDate today=LocalDate.now();
+                    long daysBetween= ChronoUnit.DAYS.between(rentDto.getOrderDate(),today);
+                    int duration=Math.toIntExact(daysBetween);
+                    double totalPayable=0.0;
+                    double additionalCharge=0.0;
+
+                    if(duration>30){
+                        additionalCharge=(existingVehicle.getRentPerDay()+1000)*(duration-30);
+                        totalPayable=existingVehicle.getRentPerDay()*30+additionalCharge;
+                    }else{
+                        totalPayable=existingVehicle.getRentPerDay()*duration;
+                    }
+
+                    rent.setOrderDate(rentDto.getOrderDate());
+                    rent.setDuration(duration);
+                    rent.setOverDue(additionalCharge);
+                    rent.setTotalPayable(totalPayable);
+                    rent.setIsCompleted(false);
+                    rent.setVehicle(existingVehicle);
+                    rent.setUser(existingUser);
+
+                    rentRepository.save(rent);
+
+                    return "Rent Saved Successfully";
+                }else{
+                    return "Rent is existed to the entered vehicle";
+                }
+
             }else{
-                totalPayable=existingVehicle.getRentPerDay()*duration;
+                return "A rent is existed to the entered user";
             }
 
-            rent.setOrderDate(rentDto.getOrderDate());
-            rent.setDuration(duration);
-            rent.setOverDue(additionalCharge);
-            rent.setTotalPayable(totalPayable);
-            rent.setIsCompleted(false);
-            rent.setVehicle(existingVehicle);
-            rent.setUser(existingUser);
-
-            return rentRepository.save(rent);
         }else{
-            return null;
+            return "User Or Vehicle is not existed";
         }
     }
 
@@ -165,4 +182,12 @@ public class RentServiceImpl implements RentService{
             return false;
         }
     }
+
+    @Override
+    public String hasRentForUser(Long id) {
+
+        return null;
+    }
+
+
 }

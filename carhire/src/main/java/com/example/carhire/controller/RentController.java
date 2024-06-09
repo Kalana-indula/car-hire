@@ -29,16 +29,12 @@ public class RentController {
     @PostMapping("/rents")
     public ResponseEntity<?> createRent(@RequestBody RentDto rentDto){
 
-        Rent newRent= rentService.createRent(rentDto);
+        String newRent=rentService.createRent(rentDto);
 
-        if(newRent!=null){
-            try{
-                return ResponseEntity.status(HttpStatus.CREATED).body(newRent);
-            }catch (Exception e){
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-            }
-        }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Vehicle Found");
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(newRent);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
 
     }
